@@ -17,4 +17,9 @@ public class UIManager : MonoBehaviour
     {
         _coin.SetActive(true);
     }
+
+    public void useStoreCoin()
+    {
+        _coin.SetActive(false);
+    }
 }

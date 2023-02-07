@@ -20,19 +20,21 @@ public class Player : MonoBehaviour
     private bool _isRealoading = false;
     private UIManager _uiManager;
     public bool hasCoin = false;
+    [SerializeField]
+    private GameObject _weapon;
+
     void Start()
     {
         _controller = GetComponent<CharacterController>();
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
-        _currentAmmo = _maxAmmo;
         _uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetMouseButton(0))
+        if (Input.GetMouseButton(0) && _currentAmmo > 0)
         {
             if(_currentAmmo > 0)
             {
@@ -82,6 +84,12 @@ public class Player : MonoBehaviour
             Debug.Log("Hit: " + hitInfo.transform.name);
             GameObject hit = Instantiate(_hitMarker, hitInfo.point, Quaternion.LookRotation(hitInfo.normal)) as GameObject;
             Destroy(hit, 0.1f);
+
+            DestructionCrate crate = hitInfo.transform.GetComponent<DestructionCrate>();
+            if(crate != null)
+            {
+                crate.DestroyCrate();
+            }
         }
     }
 
@@ -94,5 +102,11 @@ public class Player : MonoBehaviour
         velocity.y -= _gravity;
         velocity = transform.transform.TransformDirection(velocity);
         _controller.Move(velocity * Time.deltaTime);
+    }
+    public void EnableWeapon()
+    {
+        _currentAmmo = _maxAmmo;
+        _uiManager.updateAmmo(_currentAmmo);
+        _weapon.SetActive(true);
     }
 }
